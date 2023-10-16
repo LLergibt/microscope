@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 import sys
 sys.path.append("..")
 from database_connect import engine
