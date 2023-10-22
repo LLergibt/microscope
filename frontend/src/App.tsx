@@ -1,5 +1,5 @@
 import { createSignal } from 'solid-js'
-import Counter from './components/base'
+import Translater from './components/Translater'
 
 function App() {
   const [count, setCount] = createSignal(0)
@@ -7,7 +7,7 @@ function App() {
   return (
     <>
       <div class="w-screen my-20 flex justify-center text-xl">
-        <Counter/>
+        <Translater/>
       </div>
     </>
   )
