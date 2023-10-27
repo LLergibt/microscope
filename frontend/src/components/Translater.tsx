@@ -1,13 +1,15 @@
 import type { JSX, Component } from 'solid-js';
 import { createSignal, createContext, createEffect, createResource } from 'solid-js';
+import {useUser} from '../contexts/UserProvider'
 type Component<P = {}> = (props: P) => JSX.Element;
 
 const Translater: Component = () => {
   let video
+  const {isAuthenticated} = useUser()
 
   const [count, setCount] = createSignal(0);
   const [isStreaming, setIsStreaming] = createSignal(false)
-  var pc = null
+  let pc = null
 
   async function negotiate() {
       pc.addTransceiver('video', {direction: 'recvonly'});
@@ -69,13 +71,15 @@ const Translater: Component = () => {
 
   return (
   <>
-    <button  onClick={() => {isStreaming()? stop() : start()}}>
-      {isStreaming()? 'stop': 'start'}
-    </button>
-    <p>
-    </p>
-    <video id="video" ref={video} autoPlay>
-    </video>
+    <div class="w-screen my-20 flex justify-center text-xl">
+      {isAuthenticated() && <button  onClick={() => {isStreaming()? stop() : start()}}>
+        {isStreaming()? 'stop': 'start'}
+      </button>}
+      <p>
+      </p>
+      <video id="video" ref={video} autoPlay>
+      </video>
+    </div>
   </>
   );
 };
