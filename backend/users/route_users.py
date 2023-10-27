@@ -38,13 +38,18 @@ def create_access_token(data: dict):
 def get_user(login):
     with Session(engine) as session:
         result = session.execute(f"SELECT * FROM user_table WHERE login='{login}'").all()
-        return result[0]
+        if result:
+            return result[0]
+        return False
 
-@router.get("/authenticate")
-def authenticate_user(login: str, password: str):
-    user = get_user(login)
-    if not user:
+
+@router.post("/login/")
+def authenticate_user(user: User_Table):
+    print(user)
+    
+    db_user = get_user(user.login)
+    if not db_user:
         return False
-    if not verify_password(password, user.password):
+    if not verify_password(user.password, db_user.password):
         return False
-    return create_access_token({"login": user.login, "id": user.id})
+    return create_access_token({"login": db_user.login, "id": db_user.id})
