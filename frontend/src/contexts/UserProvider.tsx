@@ -1,58 +1,75 @@
-import { createContext, createEffect, onMount, createResource, createSignal, useContext } from "solid-js";
-import axios from 'axios'
-import { jwtDecode } from "jwt-decode";
+import {
+  createContext,
+  createEffect,
+  createSignal,
+  useContext,
+} from "solid-js";
+import type { JSX, Component, Accessor } from "solid-js";
+import axios from "axios";
 
-const UserContext = createContext()
-const UserProvider = (props) => {
-  console.log(localStorage.getItem('jwt-token'))
-  const [token, setToken] = createSignal(localStorage.getItem('jwt-token'))
-  const [login, setLogin] = createSignal('')
+type userType = {
+  login: string;
+  password: string;
+};
+type userContextType = {
+  loginUser: (user: userType) => Promise<string>;
+  token: Accessor<string>;
+  login: Accessor<string>;
+  logout: () => void;
+};
+
+const UserContext = createContext<userContextType>();
+const UserProvider: Component<{ children: JSX.Element }> = (props) => {
+  const [token, setToken] = createSignal(
+    localStorage.getItem("jwt-token") ?? ""
+  );
+  const [login, setLogin] = createSignal("");
   const handleToken = async () => {
-        if (token() && localStorage.getItem('jwt-token') !== token()) {
-            localStorage.setItem("jwt-token", await token())
-
-        }
-        if (token()) {
-          const decodedLogin = jwtDecode(token()).login
-          setLogin(decodedLogin)
-        }
-  }
-  const isAuthenticated = () => token()? true: false
-  const logout = () => {
-      if (token()) {
-        localStorage.removeItem("jwt-token")
-        setLogin()
-        setToken()
-      }
-
-  }
+    if (token() && localStorage.getItem("jwt-token") !== token()) {
+      localStorage.setItem("jwt-token", token());
+    }
+    if (token()) {
+      const response = await axios("http://localhost:8000/get-user", {
+        headers: {
+          Authorization: `Bearer ${token()}`,
+        },
+      });
+      response.status === 200 && setLogin(response.data.login);
+    }
+  };
+  const logout: () => void = () => {
+    if (token()) {
+      localStorage.removeItem("jwt-token");
+      setLogin("");
+      setToken("");
+    }
+  };
 
   createEffect(() => {
-    handleToken()
-  })
-  const loginUser = async (user) => {
-      if (user === "") return [];
-  
-    const responseRaw = await fetch('http://localhost:8000/login/', {
+    handleToken();
+    console.log("effect");
+  });
+  const loginUser = async (user: userType) => {
+    const responseRaw = await fetch("http://localhost:8000/login/", {
       body: JSON.stringify({
         login: user.login,
-        password: user.password
+        password: user.password,
       }),
-              headers: {
-                  'Content-Type': 'application/json'
-              },
-              method: 'POST'
-          });
-     const response = await responseRaw.json()
-     setToken(response)
-     return response
-  }
-  
+      headers: {
+        "Content-Type": "application/json",
+      },
+      method: "POST",
+    });
+    const token: string = await responseRaw.json();
+    setToken(token);
+    return token;
+  };
+
   return (
-    <UserContext.Provider value={{loginUser, token, login, isAuthenticated, logout}}>
+    <UserContext.Provider value={{ loginUser, token, login, logout }}>
       {props.children}
     </UserContext.Provider>
-  )
-}
-export const useUser = () => useContext(UserContext)
-export default UserProvider
+  );
+};
+export const useUser = () => useContext(UserContext);
+export default UserProvider;
