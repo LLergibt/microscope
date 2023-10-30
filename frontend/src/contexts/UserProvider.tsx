@@ -1,4 +1,4 @@
-import { createContext, createEffect, createResource, createSignal, useContext } from "solid-js";
+import { createContext, createEffect, onMount, createResource, createSignal, useContext } from "solid-js";
 import axios from 'axios'
 import { jwtDecode } from "jwt-decode";
 
@@ -12,18 +12,28 @@ const UserProvider = (props) => {
             localStorage.setItem("jwt-token", await token())
 
         }
-        token() && setLogin(jwtDecode(token()).login)
+        if (token()) {
+          const decodedLogin = jwtDecode(token()).login
+          setLogin(decodedLogin)
+        }
   }
   const isAuthenticated = () => token()? true: false
+  const logout = () => {
+      if (token()) {
+        localStorage.removeItem("jwt-token")
+        setLogin()
+        setToken()
+      }
+
+  }
 
   createEffect(() => {
     handleToken()
   })
   const loginUser = async (user) => {
-      console.log(user, 'gg')
       if (user === "") return [];
   
-    const response = await fetch('http://localhost:8000/login/', {
+    const responseRaw = await fetch('http://localhost:8000/login/', {
       body: JSON.stringify({
         login: user.login,
         password: user.password
@@ -33,12 +43,13 @@ const UserProvider = (props) => {
               },
               method: 'POST'
           });
-     setToken(await response.json())
-     return response.json()
+     const response = await responseRaw.json()
+     setToken(response)
+     return response
   }
   
   return (
-    <UserContext.Provider value={{loginUser, token, login, isAuthenticated}}>
+    <UserContext.Provider value={{loginUser, token, login, isAuthenticated, logout}}>
       {props.children}
     </UserContext.Provider>
   )
