@@ -6,9 +6,18 @@ from users.model_users import User_Table
 from sqlmodel import Session
 from pydantic import BaseModel
 import os
-from jose import JWTError, jwt
+from jose import jwt
 from utils.password import get_password_hash, verify_password
 from dotenv import load_dotenv
+from typing import Union, Any
+from fastapi import Depends, HTTPException, status
+from .auth_bearer import JWTBearer
+from .auth_handler import signJWT
+
+
+from jose import jwt
+from pydantic import ValidationError
+
 
 router = APIRouter()
 load_dotenv()
@@ -31,9 +40,6 @@ class UserToken(BaseModel):
     id: int
 
 
-def create_access_token(data: dict):
-    encoded_jwt = jwt.encode(data, SECRET_KEY, algorithm='HS256')
-    return encoded_jwt
 
 def get_user(login):
     with Session(engine) as session:
@@ -42,14 +48,29 @@ def get_user(login):
             return result[0]
         return False
 
+@router.get("/get-user/")
+def get_current_user(token: str = Depends(JWTBearer())):
+    payload = jwt.decode(
+        token, SECRET_KEY, algorithms="HS256"
+    )
+    user = get_user(payload['login'])
+    
+    if user is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Could not find user",
+        )
+    
+    return {"login": user.login, "id": user.id}
 
 @router.post("/login/")
 def authenticate_user(user: User_Table):
     print(user)
     
     db_user = get_user(user.login)
+    print(db_user)
     if not db_user:
         return False
     if not verify_password(user.password, db_user.password):
         return False
-    return create_access_token({"login": db_user.login, "id": db_user.id})
+    return signJWT(db_user.login, db_user.id)
