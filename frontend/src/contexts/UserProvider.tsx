@@ -5,18 +5,8 @@ import {
   useContext,
 } from "solid-js";
 import type { JSX, Component, Accessor } from "solid-js";
+import type { userContextType, userType } from "@types/user";
 import axios from "axios";
-
-type userType = {
-  login: string;
-  password: string;
-};
-type userContextType = {
-  loginUser: (user: userType) => Promise<string>;
-  token: Accessor<string>;
-  login: Accessor<string>;
-  logout: () => void;
-};
 
 const UserContext = createContext<userContextType>();
 const UserProvider: Component<{ children: JSX.Element }> = (props) => {
@@ -47,22 +37,23 @@ const UserProvider: Component<{ children: JSX.Element }> = (props) => {
 
   createEffect(() => {
     handleToken();
-    console.log("effect");
   });
   const loginUser = async (user: userType) => {
-    const responseRaw = await fetch("http://localhost:8000/login/", {
-      body: JSON.stringify({
-        login: user.login,
-        password: user.password,
-      }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-      method: "POST",
-    });
-    const token: string = await responseRaw.json();
-    setToken(token);
-    return token;
+    if (user) {
+      const responseRaw = await fetch("http://localhost:8000/login/", {
+        body: JSON.stringify({
+          login: user.login,
+          password: user.password,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        method: "POST",
+      });
+      const token: string = await responseRaw.json();
+      setToken(token);
+      return token;
+    }
   };
 
   return (
