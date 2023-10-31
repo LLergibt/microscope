@@ -13,7 +13,7 @@ def decodeJWT(token: str) -> dict:
     except:
         return {}
 
-def signJWT(id: int, login: str) -> str:
+def signJWT(login: str, id: int) -> str:
     payload = {
         "id": id,
         "login": login,
