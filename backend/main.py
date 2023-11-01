@@ -3,6 +3,9 @@ from users.route_users import router as user_router
 from microscopes.routes_microscope import router as microscope_router
 from database_connect import create_db_and_tables
 from fastapi.middleware.cors import CORSMiddleware
+import sys
+sys.path.append('./users')
+sys.path.append('./microscopes')
 
 
 

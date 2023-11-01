@@ -1,5 +1,8 @@
 from sqlmodel import SQLModel, create_engine
 from sqlalchemy.orm import sessionmaker
+from microscopes.models_microscope import Webcam_Config
+from users.model_users import User_Table
+
 
 db_name = "microscope"
 
