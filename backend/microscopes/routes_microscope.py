@@ -1,10 +1,17 @@
 from fastapi import APIRouter
-from .base import write_image
-from .models_microscope import Offer
+from .models_microscope import Offer, Webcam_Config
 from fastapi.responses import StreamingResponse, FileResponse
+from database_connect import engine
 from io import BytesIO
 import cv2
 from aiortc import RTCPeerConnection, RTCSessionDescription
+from sqlmodel import Session
+
+
+
+
+from fastapi import Depends, HTTPException
+from users.auth_bearer import JWTBearer
 from aiortc.contrib.media import MediaPlayer, MediaRelay
 import asyncio
 
@@ -67,11 +74,26 @@ async def on_shutdown():
     await asyncio.gather(*coros)
     pcs.clear()
 
-@router.post("/take-shot")
-def take_shot(title: str):
-    write_image(title)
-    return FileResponse(f"{title}.png")
-    #return StreamingResponse(image, media_type="image/png")
+@router.post("/start_translation")
+def start_translation(token: str = Depends(JWTBearer())):
+    with Session(engine) as session:
+        result = session.execute(f"SELECT is_streaming FROM webcam_config").one()
+        if result:
+            not_is_streaming = not result["is_streaming"]
+            session.execute(f"UPDATE webcam_config  set is_streaming={not_is_streaming}  WHERE id=1")
+            session.commit()
+            return not_is_streaming
+        return False
+@router.get("/translation")
+def start_translation():
+    with Session(engine) as session:
+        result = session.execute(f"SELECT is_streaming FROM webcam_config").one()
+        if result:
+            return result
+        return False
+
+
+
 
 
     #return StreamingResponse(img.read(), media_type="image/png")
