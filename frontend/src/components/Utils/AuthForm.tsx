@@ -1,5 +1,5 @@
 import { createSignal, Show, createResource } from "solid-js";
-import { useUser } from "../contexts/UserProvider";
+import { useUser } from "@contexts/UserProvider";
 import type { Accessor } from "solid-js";
 import type { userType } from "@types/user";
 import { Navigate } from "@solidjs/router";

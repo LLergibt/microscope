@@ -24,7 +24,8 @@
     "paths": {
       "@hooks/*": ["hooks/*"],
       "@contexts/*": ["contexts/*"],
-      "@types/*": ["types/*"]
+      "@types/*": ["types/*"],
+      "@components/*": ["components/*"]
     }
   },
   "include": ["src"],

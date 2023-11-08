@@ -1,4 +1,4 @@
-import AuthForm from "./AuthForm";
+import AuthForm from "@components/Utils/AuthForm";
 import { A } from "@solidjs/router";
 
 const Login = () => {
