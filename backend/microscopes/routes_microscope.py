@@ -2,8 +2,6 @@ from fastapi import APIRouter
 from .models_microscope import Offer, Webcam_Config
 from fastapi.responses import StreamingResponse, FileResponse
 from database_connect import engine
-from io import BytesIO
-import cv2
 from aiortc import RTCPeerConnection, RTCSessionDescription
 from sqlmodel import Session
 
@@ -74,7 +72,7 @@ async def on_shutdown():
     await asyncio.gather(*coros)
     pcs.clear()
 
-@router.post("/start_translation")
+@router.post("/translation")
 def start_translation(token: str = Depends(JWTBearer())):
     with Session(engine) as session:
         result = session.execute(f"SELECT is_streaming FROM webcam_config").one()
@@ -85,7 +83,7 @@ def start_translation(token: str = Depends(JWTBearer())):
             return not_is_streaming
         return False
 @router.get("/translation")
-def start_translation():
+def translation():
     with Session(engine) as session:
         result = session.execute(f"SELECT is_streaming FROM webcam_config").one()
         if result:

@@ -11,7 +11,7 @@ export const useStreaming = () => {
     return response.data.is_streaming;
   };
   const isStreamingApiChange = async () => {
-    const response = await fetch("http://localhost:8000/start_translation", {
+    const response = await fetch("http://localhost:8000/translation", {
       headers: { Authorization: `Bearer ${token()}` },
       method: "POST",
     });
