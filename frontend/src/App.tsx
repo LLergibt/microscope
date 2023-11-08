@@ -1,5 +1,5 @@
-import Translater from "./components/Translater";
-import Login from "./components/Login";
+import Translater from "./pages/Translater";
+import Login from "./pages/Login";
 import Navbar from "./components/Layout/Navbar";
 import UserProvider from "./contexts/UserProvider";
 import { Router, Route, Routes } from "@solidjs/router";
