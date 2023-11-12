@@ -1,3 +1,4 @@
+import axios from "axios";
 let pc = null;
 async function negotiate() {
   pc.addTransceiver("video", { direction: "recvonly" });
@@ -19,15 +20,9 @@ async function negotiate() {
 
   async function queryToApi() {
     let offer = pc.localDescription;
-    const result = await fetch("http://localhost:8000/webcam/offer", {
-      body: JSON.stringify({
-        sdp: offer.sdp,
-        type: offer.type,
-      }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-      method: "POST",
+    const result = await axios.post("http://localhost:8000/webcam/offer", {
+      sdp: offer.sdp,
+      type: offer.type,
     });
     return result.json();
   }

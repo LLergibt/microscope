@@ -13,11 +13,17 @@ export const useStreaming = () => {
     return response.data.is_streaming;
   };
   const isStreamingApiChange = async () => {
-    const response = await fetch("http://localhost:8000/webcam/translation", {
-      headers: { Authorization: `Bearer ${token()}` },
-      method: "POST",
-    });
-    return response.json();
+    let config = {
+      headers: {
+        Authorization: `Bearer ${token()}`,
+      },
+    };
+    const response = await axios.post(
+      "http://localhost:8000/webcam/translation",
+      {},
+      config
+    );
+    return response.data;
   };
   const handleStreaming = async () => {
     setIsStreaming((prev) => !prev);
