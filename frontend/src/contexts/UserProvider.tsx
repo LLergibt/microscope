@@ -6,7 +6,7 @@ import {
 } from "solid-js";
 import type { JSX, Component, Accessor } from "solid-js";
 import type { userContextType, userType } from "@types/user";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 
 const UserContext = createContext<userContextType>();
 const UserProvider: Component<{ children: JSX.Element }> = (props) => {
@@ -40,19 +40,16 @@ const UserProvider: Component<{ children: JSX.Element }> = (props) => {
   });
   const loginUser = async (user: userType) => {
     if (user) {
-      const responseRaw = await fetch("http://localhost:8000/login/", {
-        body: JSON.stringify({
-          login: user.login,
-          password: user.password,
-        }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-        method: "POST",
-      });
-      const token: string = await responseRaw.json();
-      setToken(token);
-      return token;
+      const response: AxiosResponse = await axios
+        .post("http://localhost:8000/login", user)
+        .catch((error) => {
+          return error.response;
+        });
+      if (response.status === 200) {
+        setToken(response.data);
+        return response;
+      }
+      return response;
     }
   };
 

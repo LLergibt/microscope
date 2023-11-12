@@ -1,6 +1,4 @@
 from fastapi import APIRouter, HTTPException
-import sys
-sys.path.append("..")
 from database_connect import engine
 from users.model_users import User_Table
 from sqlmodel import Session
@@ -11,8 +9,8 @@ from utils.password import get_password_hash, verify_password
 from dotenv import load_dotenv
 from typing import Union, Any
 from fastapi import Depends, HTTPException, status
-from .auth_bearer import JWTBearer
-from .auth_handler import signJWT
+from users.auth_bearer import JWTBearer
+from users.auth_handler import signJWT
 
 
 from jose import jwt
@@ -70,7 +68,13 @@ def authenticate_user(user: User_Table):
     db_user = get_user(user.login)
     print(db_user)
     if not db_user:
-        return False
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Could not find user",
+        )
     if not verify_password(user.password, db_user.password):
-        return False
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Incorrect password",
+        )
     return signJWT(db_user.login, db_user.id)
