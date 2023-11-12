@@ -24,7 +24,7 @@ async function negotiate() {
       sdp: offer.sdp,
       type: offer.type,
     });
-    return result.json();
+    return result.data;
   }
   const result = await queryToApi();
 
