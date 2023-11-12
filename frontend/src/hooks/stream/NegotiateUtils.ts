@@ -19,7 +19,7 @@ async function negotiate() {
 
   async function queryToApi() {
     let offer = pc.localDescription;
-    const result = await fetch("http://localhost:8000/offer", {
+    const result = await fetch("http://localhost:8000/webcam/offer", {
       body: JSON.stringify({
         sdp: offer.sdp,
         type: offer.type,
@@ -32,7 +32,6 @@ async function negotiate() {
     return result.json();
   }
   const result = await queryToApi();
-  console.log(result);
 
   pc.setRemoteDescription(result);
 }
@@ -51,7 +50,6 @@ export async function start() {
 
   await negotiate();
 }
-
 
 export async function stop() {
   // close peer connection

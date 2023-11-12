@@ -14,7 +14,7 @@ from aiortc.contrib.media import MediaPlayer, MediaRelay
 import asyncio
 
 
-router = APIRouter()
+router = APIRouter(prefix="/webcam")
 relay = None
 webcam = None
 

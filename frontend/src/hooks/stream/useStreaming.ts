@@ -7,11 +7,13 @@ export const useStreaming = () => {
   const token = context?.token;
   const [isStreaming, setIsStreaming] = createSignal();
   const isStreamingApi = async () => {
-    const response = await axios.get("http://localhost:8000/translation/");
+    const response = await axios.get(
+      "http://localhost:8000/webcam/translation/"
+    );
     return response.data.is_streaming;
   };
   const isStreamingApiChange = async () => {
-    const response = await fetch("http://localhost:8000/translation", {
+    const response = await fetch("http://localhost:8000/webcam/translation", {
       headers: { Authorization: `Bearer ${token()}` },
       method: "POST",
     });
@@ -19,8 +21,7 @@ export const useStreaming = () => {
   };
   const handleStreaming = async () => {
     setIsStreaming((prev) => !prev);
-    const response = await isStreamingApiChange();
-    console.log(response);
+    await isStreamingApiChange();
   };
 
   onMount(async () => {

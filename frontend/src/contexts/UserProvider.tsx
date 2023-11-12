@@ -19,7 +19,7 @@ const UserProvider: Component<{ children: JSX.Element }> = (props) => {
       localStorage.setItem("jwt-token", token());
     }
     if (token()) {
-      const response = await axios("http://localhost:8000/get-user", {
+      const response = await axios.get("http://localhost:8000/user", {
         headers: {
           Authorization: `Bearer ${token()}`,
         },
@@ -41,7 +41,7 @@ const UserProvider: Component<{ children: JSX.Element }> = (props) => {
   const loginUser = async (user: userType) => {
     if (user) {
       const response: AxiosResponse = await axios
-        .post("http://localhost:8000/login", user)
+        .post("http://localhost:8000/user/login", user)
         .catch((error) => {
           return error.response;
         });
