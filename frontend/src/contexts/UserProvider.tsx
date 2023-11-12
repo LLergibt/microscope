@@ -10,10 +10,10 @@ import axios, { AxiosResponse } from "axios";
 
 const UserContext = createContext<userContextType>();
 const UserProvider: Component<{ children: JSX.Element }> = (props) => {
+  const [login, setLogin] = createSignal("");
   const [token, setToken] = createSignal(
     localStorage.getItem("jwt-token") ?? ""
   );
-  const [login, setLogin] = createSignal("");
   const handleToken = async () => {
     if (token() && localStorage.getItem("jwt-token") !== token()) {
       localStorage.setItem("jwt-token", token());
@@ -27,6 +27,11 @@ const UserProvider: Component<{ children: JSX.Element }> = (props) => {
       response.status === 200 && setLogin(response.data.login);
     }
   };
+
+  createEffect(() => {
+    handleToken();
+  });
+
   const logout: () => void = () => {
     if (token()) {
       localStorage.removeItem("jwt-token");
@@ -35,9 +40,6 @@ const UserProvider: Component<{ children: JSX.Element }> = (props) => {
     }
   };
 
-  createEffect(() => {
-    handleToken();
-  });
   const loginUser = async (user: userType) => {
     if (user) {
       const response: AxiosResponse = await axios
