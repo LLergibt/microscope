@@ -17,7 +17,7 @@ from jose import jwt
 from pydantic import ValidationError
 
 
-router = APIRouter()
+router = APIRouter(prefix="/user")
 load_dotenv()
 SECRET_KEY = os.environ['SECRET_KEY']
 
@@ -46,7 +46,7 @@ def get_user(login):
             return result[0]
         return False
 
-@router.get("/get-user/")
+@router.get("/")
 def get_current_user(token: str = Depends(JWTBearer())):
     payload = jwt.decode(
         token, SECRET_KEY, algorithms="HS256"
