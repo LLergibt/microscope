@@ -13,7 +13,7 @@ const MenuDropdown: Component<{
   return (
     <div
       ref={(el) => setDropdown(el)}
-      class="w-auto h-auto absolute bg-teal-200"
+      class="w-auto border  rounded h-auto h-32 w-32 absolute my-1 ml-1 pl-1 shadow bg-white "
     >
       {props.children}
     </div>

@@ -11,7 +11,7 @@ const Dropdown: Component<{
   return (
     <>
       <button
-        class="font-light border border-black bg-gray-100 px-3 max-w-xs text-center shadow-md"
+        class=" border border-gray-300 m-1 hover:bg-gray-100 shadow-sm rounded-sm text-left px-3  max-w-xs shadow-md"
         onClick={() => {
           setIsClicked(true);
         }}

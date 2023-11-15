@@ -8,15 +8,22 @@ const Navbar = () => {
 
   return (
     <>
-      <div class="h-28 w-screen  bg-gray-200">
+      <div class="pb-6 border-gray-300 border-b w-screen  ">
         <Show
           when={login && login() !== ""}
-          fallback={<A href="/login">login</A>}
+          fallback={
+            <A
+              class="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+              href="/login"
+            >
+              login
+            </A>
+          }
         >
           <AuthenticatedNavbar />
         </Show>
-        <Outlet />
       </div>
+      <Outlet />
     </>
   );
 };
