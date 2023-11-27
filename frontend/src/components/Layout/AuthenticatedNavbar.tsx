@@ -9,8 +9,11 @@ const AuthenticatedNavbar: Component = () => {
   return (
     <>
       <Dropdown buttonValue={login}>
-        <p class="border-b font-medium pb-1">{login()}</p>
-        <button class="hover:bg-gray-100 w-full  text-left" onClick={logout}>
+        <p class="border-b  font-medium pb-1 pr-3 w-auto ">{login()}</p>
+        <button
+          class="hover:bg-gray-100 w-full pr-4 text-left"
+          onClick={logout}
+        >
           logout
         </button>
       </Dropdown>

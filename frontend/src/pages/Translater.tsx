@@ -11,26 +11,27 @@ const Translater: Component = () => {
 
   return (
     <>
-      <div class="w-screen my-20 flex justify-center text-xl">
+      <div class="w-full  h-full mt-8 flex  flex-col text-xl">
         <div>
           <Show when={login && login()}>
-            <button class="bg-red-200" onClick={handleStreaming}>
+            <button
+              class="rounded  text-center w-32  ml-8 h-8 text-white hover:text-gray-300  bg-black    border border-gray-300"
+              onClick={handleStreaming}
+            >
               {isStreaming() ? "stop" : "start"}
             </button>
           </Show>
         </div>
 
-        <div class="h-screen w-f">
-          <video
-            class="h-full w-3/4"
-            id="video"
-            ref={video}
-            width="1000"
-            height="600"
-            autoPlay
-            muted
-          />
-        </div>
+        <video
+          class={`ml-8 w-1/2 mt-2  ${
+            !login() && "w-3/5 mt-0 self-center"
+          } h-auto   `}
+          id="video"
+          ref={video}
+          autoPlay
+          muted
+        />
       </div>
     </>
   );

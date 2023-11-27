@@ -13,10 +13,10 @@ const Navbar = () => {
           when={login && login() !== ""}
           fallback={
             <A
-              class="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+              class="text-gray-600 transition-colors hover:text-black"
               href="/login"
             >
-              login
+              Login
             </A>
           }
         >

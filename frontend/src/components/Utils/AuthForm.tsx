@@ -27,7 +27,7 @@ const AuthForm = () => {
         errorCondition={() => response() && response().status === 400}
       />
       <button
-        class="rounded py-1 pt-2 text-center w-4/6 mt-4  text-white bg-violet-700 mt-2  text-sm border border-gray-300"
+        class="rounded py-1 pt-2 text-center w-4/6 mt-4  text-white hover:text-gray-300  bg-black mt-2  text-sm border border-gray-300"
         onClick={() => {
           setUser({ login: login(), password: password() });
         }}
