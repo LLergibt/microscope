@@ -7,56 +7,65 @@ import {
 import type { JSX, Component, Accessor } from "solid-js";
 import type { userContextType, userType } from "@types/user";
 import axios, { AxiosResponse } from "axios";
+import { onIdTokenChanged } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  updateProfile,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
+import { auth } from "@services/firebase";
 
 const UserContext = createContext<userContextType>();
 const UserProvider: Component<{ children: JSX.Element }> = (props) => {
   const [login, setLogin] = createSignal("");
-  const [token, setToken] = createSignal(
-    localStorage.getItem("jwt-token") ?? ""
-  );
-  const handleToken = async () => {
-    if (token() && localStorage.getItem("jwt-token") !== token()) {
-      localStorage.setItem("jwt-token", token());
+  const [user, setUser] = createSignal();
+  onIdTokenChanged(auth, (authUser) => {
+    if (authUser) {
+      setUser(authUser);
+      setLogin(authUser.displayName);
     }
-    if (token()) {
-      const response = await axios.get("http://localhost:8000/user", {
-        headers: {
-          Authorization: `Bearer ${token()}`,
-        },
-      });
-      response.status === 200 && setLogin(response.data.login);
-    }
-  };
-
-  createEffect(() => {
-    handleToken();
   });
 
-  const logout: () => void = () => {
-    if (token()) {
-      localStorage.removeItem("jwt-token");
-      setLogin("");
-      setToken("");
-    }
+  const logout: () => void = async () => {
+    await auth.signOut();
+    setUser();
   };
 
-  const loginUser = async (user: userType) => {
-    if (user) {
-      const response: AxiosResponse = await axios
-        .post("http://localhost:8000/user/login", user)
-        .catch((error) => {
-          return error.response;
-        });
-      if (response.status === 200) {
-        setToken(response.data);
-        return response;
+  const loginUser = async ({ email, password }) => {
+    try {
+      const user = await signInWithEmailAndPassword(auth, email, password);
+      return user;
+    } catch (err) {
+      console.error(err);
+      alert(err.message);
+      return err;
+    }
+  };
+  const createUser = async (userForm: userType) => {
+    try {
+      const res = await createUserWithEmailAndPassword(
+        auth,
+        userForm.email,
+        userForm.password
+      );
+      if (auth.currentUser) {
+        await updateProfile(auth.currentUser, {
+          displayName: userForm.login,
+        }).catch((err) => console.log(err));
+        await auth.currentUser.reload();
+        return true;
       }
-      return response;
+    } catch (err) {
+      console.error(err);
+      alert(err.message);
+      return err;
     }
   };
 
   return (
-    <UserContext.Provider value={{ loginUser, token, login, logout }}>
+    <UserContext.Provider
+      value={{ loginUser, user, login, logout, createUser }}
+    >
       {props.children}
     </UserContext.Provider>
   );
