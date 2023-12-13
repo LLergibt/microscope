@@ -28,6 +28,7 @@ const UserProvider: Component<{ children: JSX.Element }> = (props) => {
 
   const logout: () => void = async () => {
     await auth.signOut();
+    setLogin("")
     setUser();
   };
 
