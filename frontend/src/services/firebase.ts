@@ -5,8 +5,10 @@ import {
   collection,
   addDoc,
   serverTimestamp,
+  onSnapshot,
+  query,
+  orderBy,
 } from "firebase/firestore";
-
 import { getAnalytics } from "firebase/analytics";
 const firebaseConfig = {
   apiKey: "AIzaSyBW5dRcsggB-GteyAhjY8TXotc4uRGlbPA",
@@ -28,7 +30,7 @@ export const useFirestore = () => {
   const sendMessage = async (roomId, user, text) => {
     console.log(user());
     try {
-      await addDoc(collection(db, "chat-rooms", "1", "messages"), {
+      await addDoc(collection(db, "chat-rooms", roomId, "messages"), {
         uid: user().uid,
         displayName: user().displayName,
         text: text(),
@@ -38,5 +40,20 @@ export const useFirestore = () => {
       console.error(error);
     }
   };
-  return { sendMessage };
+  const getMessages = async (roomId, callback) => {
+    return onSnapshot(
+      query(
+        collection(db, "chat-rooms", roomId, "messages"),
+        orderBy("timestamp", "asc")
+      ),
+      (querySnapshot) => {
+        const messages = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        callback(messages);
+      }
+    );
+  };
+  return { sendMessage, getMessages };
 };
