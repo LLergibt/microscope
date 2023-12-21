@@ -13,12 +13,21 @@ import {
   updateProfile,
   signInWithEmailAndPassword,
 } from "firebase/auth";
-import { auth } from "@services/firebase";
+import {
+  collection,
+  query,
+  orderBy,
+  getDocs,
+  addDoc,
+  where,
+} from "firebase/firestore";
+import { auth, db } from "@services/firebase";
 
 const UserContext = createContext<userContextType>();
 const UserProvider: Component<{ children: JSX.Element }> = (props) => {
   const [login, setLogin] = createSignal("");
   const [user, setUser] = createSignal();
+  const [isAdmin, setIsAdmin] = createSignal();
   onIdTokenChanged(auth, (authUser) => {
     if (authUser) {
       setUser(authUser);
@@ -28,8 +37,9 @@ const UserProvider: Component<{ children: JSX.Element }> = (props) => {
 
   const logout: () => void = async () => {
     await auth.signOut();
-    setLogin("")
+    setLogin("");
     setUser();
+    setIsAdmin();
   };
 
   const loginUser = async ({ email, password }) => {
@@ -53,7 +63,15 @@ const UserProvider: Component<{ children: JSX.Element }> = (props) => {
         await updateProfile(auth.currentUser, {
           displayName: userForm.login,
         }).catch((err) => console.log(err));
+        await addDoc(collection(db, "users"), {
+          uid: auth.currentUser.uid,
+          authProvider: "local",
+          email: userForm.email,
+          isAdmin: false,
+          login: userForm.login,
+        });
         await auth.currentUser.reload();
+
         return true;
       }
     } catch (err) {
@@ -62,10 +80,21 @@ const UserProvider: Component<{ children: JSX.Element }> = (props) => {
       return err;
     }
   };
+  const getIsAdmin = async () => {
+    if (login()) {
+      const q = query(collection(db, "users"), where("uid", "==", user().uid));
+      const userDoc = await getDocs(q);
+      userDoc.forEach((user) => {
+        setIsAdmin(user.data().isAdmin);
+      });
+      //setIsAdmin(userDoc.isAdmin);
+    }
+  };
+  createEffect(getIsAdmin);
 
   return (
     <UserContext.Provider
-      value={{ loginUser, user, login, logout, createUser }}
+      value={{ loginUser, user, login, logout, isAdmin, createUser }}
     >
       {props.children}
     </UserContext.Provider>

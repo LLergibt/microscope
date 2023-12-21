@@ -8,6 +8,7 @@ const Translater: Component = () => {
   let video;
   const context = useUser();
   const login = context?.login;
+  const isAdmin = context?.isAdmin;
   const { handleStreaming, isStreaming } = useStreaming();
 
   return (
@@ -15,7 +16,7 @@ const Translater: Component = () => {
       <div class="flex w-screen">
         <div class="w-4/5  h-full mt-8 flex  flex-col text-xl">
           <div>
-            <Show when={login && login()}>
+            <Show when={isAdmin && isAdmin()}>
               <button
                 class="rounded  text-center w-32  ml-8 h-8 text-white hover:text-gray-300  bg-black    border border-gray-300"
                 onClick={handleStreaming}
