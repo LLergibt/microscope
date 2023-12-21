@@ -5,7 +5,7 @@ function ChatRoom() {
   // ...
   return (
     <>
-      <div class="border mt-4 w-auto h-full rounded flex flex-col">
+      <div class="border">
         <MessageList roomId={"1"} />
         <MessageInput roomId={"1"} />
       </div>

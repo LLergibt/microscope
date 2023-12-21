@@ -5,12 +5,18 @@ const Message = ({ message, isOwnMessage }) => {
     <li
       class={`${
         isOwnMessage
-          ? "bg-blue-500 border rounded py-2  px-8   mb-2"
-          : "border rounded py-2 px-8 mb-2"
+          ? "bg-blue-500 self-end border rounded   w-auto  px-1 flex flex-col mb-2"
+          : "border rounded pt-1 px-1 mb-2 self-start"
       }`}
     >
-      <h4>{isOwnMessage ? "You" : displayName}</h4>
-      <div>{text}</div>
+      <h4
+        class={`${
+          isOwnMessage ? "text-end self-end" : "text-start self-start"
+        } `}
+      >
+        {isOwnMessage ? "You" : displayName}
+      </h4>
+      <div class="pl-2">{text}</div>
     </li>
   );
 };
