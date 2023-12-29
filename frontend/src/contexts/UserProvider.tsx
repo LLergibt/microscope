@@ -6,21 +6,13 @@ import {
 } from "solid-js";
 import type { JSX, Component, Accessor } from "solid-js";
 import type { userContextType, userType } from "@types/user";
-import axios, { AxiosResponse } from "axios";
 import { onIdTokenChanged } from "firebase/auth";
 import {
   createUserWithEmailAndPassword,
   updateProfile,
   signInWithEmailAndPassword,
 } from "firebase/auth";
-import {
-  collection,
-  query,
-  orderBy,
-  getDocs,
-  addDoc,
-  where,
-} from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 import { auth, db } from "@services/firebase";
 
 const UserContext = createContext<userContextType>();
@@ -42,7 +34,13 @@ const UserProvider: Component<{ children: JSX.Element }> = (props) => {
     setIsAdmin();
   };
 
-  const loginUser = async ({ email, password }) => {
+  const loginUser = async ({
+    email,
+    password,
+  }: {
+    email: string;
+    password: string;
+  }) => {
     try {
       const user = await signInWithEmailAndPassword(auth, email, password);
       return user;
@@ -54,7 +52,7 @@ const UserProvider: Component<{ children: JSX.Element }> = (props) => {
   };
   const createUser = async (userForm: userType) => {
     try {
-      const res = await createUserWithEmailAndPassword(
+      await createUserWithEmailAndPassword(
         auth,
         userForm.email,
         userForm.password
@@ -63,13 +61,6 @@ const UserProvider: Component<{ children: JSX.Element }> = (props) => {
         await updateProfile(auth.currentUser, {
           displayName: userForm.login,
         }).catch((err) => console.log(err));
-        await addDoc(collection(db, "users"), {
-          uid: auth.currentUser.uid,
-          authProvider: "local",
-          email: userForm.email,
-          isAdmin: false,
-          login: userForm.login,
-        });
         await auth.currentUser.reload();
 
         return true;
@@ -82,12 +73,9 @@ const UserProvider: Component<{ children: JSX.Element }> = (props) => {
   };
   const getIsAdmin = async () => {
     if (login()) {
-      const q = query(collection(db, "users"), where("uid", "==", user().uid));
-      const userDoc = await getDocs(q);
-      userDoc.forEach((user) => {
-        setIsAdmin(user.data().isAdmin);
-      });
-      //setIsAdmin(userDoc.isAdmin);
+      const userDoc = doc(db, "users", `${user().uid}`);
+      const userData = await getDoc(userDoc);
+      setIsAdmin(userData.data() ? true : false);
     }
   };
   createEffect(getIsAdmin);
