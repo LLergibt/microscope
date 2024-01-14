@@ -4,24 +4,25 @@ import { db } from "@services/firebase";
 import { collection, getDoc, doc, updateDoc } from "firebase/firestore";
 import { start, stop } from "./NegotiateUtils";
 import axios from "axios";
-export const useStreaming = () => {
+export const useStreaming = (roomUid: string) => {
   const context = useUser();
   const token = context?.token;
   const user = context?.user;
   const [isStreaming, setIsStreaming] = createSignal();
   const isStreamingApi = async () => {
-    const microscopeDoc = doc(db, "microscope_config", "1");
+    const microscopeDoc = doc(db, "rooms", roomUid);
     const microscope = await getDoc(microscopeDoc);
-    return microscope.data().is_streaming;
+    return microscope.data().microscope_config.is_streaming;
   };
   const isStreamingApiChange = async () => {
-    const microscopeDoc = doc(db, "microscope_config", "1");
-    const microscope = await getDoc(microscopeDoc);
-    console.log(microscope.data().is_streaming);
-
-    await updateDoc(microscopeDoc, {
-      is_streaming: !microscope.data().is_streaming,
-    });
+    const tokenId = await user().getIdToken();
+    await axios.post(
+      `${
+        import.meta.env.VITE_FIRESTORE_API_BASE_URL
+      }/rooms/stream/?room_uid=${roomUid}`,
+      {},
+      { headers: { Authorization: tokenId } }
+    );
   };
   const handleStreaming = async () => {
     setIsStreaming((prev) => !prev);

@@ -14,12 +14,12 @@ import {
 } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { auth, db } from "@services/firebase";
+import axios from "axios";
 
 const UserContext = createContext<userContextType>();
 const UserProvider: Component<{ children: JSX.Element }> = (props) => {
   const [login, setLogin] = createSignal("");
   const [user, setUser] = createSignal();
-  const [isAdmin, setIsAdmin] = createSignal();
   onIdTokenChanged(auth, (authUser) => {
     if (authUser) {
       setUser(authUser);
@@ -31,7 +31,6 @@ const UserProvider: Component<{ children: JSX.Element }> = (props) => {
     await auth.signOut();
     setLogin("");
     setUser();
-    setIsAdmin();
   };
 
   const loginUser = async ({
@@ -71,18 +70,22 @@ const UserProvider: Component<{ children: JSX.Element }> = (props) => {
       return err;
     }
   };
-  const getIsAdmin = async () => {
-    if (login()) {
-      const userDoc = doc(db, "users", `${user().uid}`);
-      const userData = await getDoc(userDoc);
-      setIsAdmin(userData.data() ? true : false);
-    }
+  const getIsOwner = async (roomUid: string) => {
+    const microscopeDoc = doc(db, "rooms", roomUid);
+    const microscope = await getDoc(microscopeDoc);
+    return microscope.data().owners.includes(user().uid);
   };
-  createEffect(getIsAdmin);
 
   return (
     <UserContext.Provider
-      value={{ loginUser, user, login, logout, isAdmin, createUser }}
+      value={{
+        loginUser,
+        user,
+        login,
+        getIsOwner,
+        logout,
+        createUser,
+      }}
     >
       {props.children}
     </UserContext.Provider>

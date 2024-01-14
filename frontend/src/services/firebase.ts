@@ -8,6 +8,7 @@ import {
   onSnapshot,
   query,
   orderBy,
+  getDocs,
 } from "firebase/firestore";
 import { getAnalytics } from "firebase/analytics";
 const firebaseConfig = {
@@ -30,7 +31,7 @@ export const useFirestore = () => {
   const sendMessage = async (roomId, user, text) => {
     console.log(user());
     try {
-      await addDoc(collection(db, "chat-rooms", roomId, "messages"), {
+      await addDoc(collection(db, "rooms", roomId, "messages"), {
         uid: user().uid,
         displayName: user().displayName,
         text: text(),
@@ -43,7 +44,7 @@ export const useFirestore = () => {
   const getMessages = async (roomId, callback) => {
     return onSnapshot(
       query(
-        collection(db, "chat-rooms", roomId, "messages"),
+        collection(db, "rooms", roomId, "messages"),
         orderBy("timestamp", "asc")
       ),
       (querySnapshot) => {

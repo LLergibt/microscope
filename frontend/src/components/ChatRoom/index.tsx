@@ -1,13 +1,13 @@
 import MessageInput from "./MessageInput";
 import MessageList from "./MessageList";
 
-function ChatRoom() {
+function ChatRoom(props) {
   // ...
   return (
     <>
       <div class="border">
-        <MessageList roomId={"1"} />
-        <MessageInput roomId={"1"} />
+        <MessageList roomId={props.roomUid} />
+        <MessageInput roomId={props.roomUid} />
       </div>
     </>
   );

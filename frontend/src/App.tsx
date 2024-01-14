@@ -5,7 +5,6 @@ import Navbar from "./components/Layout/Navbar";
 import UserProvider from "./contexts/UserProvider";
 import { Router, Route, Routes } from "@solidjs/router";
 
-
 function App() {
   return (
     <>
@@ -13,7 +12,7 @@ function App() {
         <Router>
           <Routes>
             <Route path="/" component={Navbar}>
-              <Route path="" component={Translater} />
+              <Route path="/:roomUid" component={Translater} />
               <Route path="/login" component={Login} />
               <Route path="/signup" component={Signup} />
             </Route>
