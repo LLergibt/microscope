@@ -1,6 +1,7 @@
 import type { JSX, Component } from "solid-js";
 import { Show, createSignal, createEffect } from "solid-js";
 import { useUser } from "@contexts/UserProvider";
+import { useRoomLogic } from "@contexts/RoomProvider";
 import { useStreaming } from "@hooks/stream/useStreaming";
 import { useParams } from "@solidjs/router";
 import ChatRoom from "@components/ChatRoom/index";
@@ -9,17 +10,7 @@ const Translater: Component = () => {
   let video;
   const context = useUser();
   const login = context?.login;
-  const user = context?.user;
-  const getIsOwner = context?.getIsOwner;
-  const [isOwner, setIsOwner] = createSignal();
-  const { roomUid } = useParams();
-  const handleOwner = async () => setIsOwner(await getIsOwner(roomUid));
-
-  createEffect(() => {
-    if (user && user()) {
-      handleOwner();
-    }
-  });
+  const { isOwner, roomUid } = useRoomLogic();
 
   const { handleStreaming, isStreaming } = useStreaming(roomUid);
 
@@ -40,9 +31,7 @@ const Translater: Component = () => {
             </div>
 
             <video
-              class={`ml-8 w-1/2 mt-2  ${
-                !login() && "w-4/5 mt-0 self-center"
-              } h-auto   `}
+              class={"w-4/5 mt-0 self-center h-auto   "}
               id="video"
               ref={video}
               autoPlay
