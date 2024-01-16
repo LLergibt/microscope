@@ -1,7 +1,10 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, WebSocket
 from .models_microscope import Offer
+from .movement_microscope import junk_is_about_to_start_moving
 from aiortc import RTCPeerConnection, RTCSessionDescription
+import json
 
+import time
 from aiortc.contrib.media import MediaPlayer, MediaRelay
 import asyncio
 
@@ -50,6 +53,27 @@ async def offer(params: Offer):
     await pc.setLocalDescription(answer)
 
     return {"sdp": pc.localDescription.sdp, "type": pc.localDescription.type}
+
+
+
+@router.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    await websocket.accept()
+    future = ''
+    tasks = []
+    while True:
+        data = await websocket.receive_text()
+        if data != 'Connection established':
+            parse_data = json.loads(data)
+            match parse_data['move_status']:
+                case 'start':
+                    future = asyncio.ensure_future(junk_is_about_to_start_moving(parse_data['direction']))
+                    tasks.append({"task": future, "direction": parse_data['direction']})
+                case 'stop':
+                    for task in tasks:
+                        if task['direction'] == parse_data['direction']:
+                            task['task'].cancel()
+                            tasks.remove(task)
 
 
 pcs = set()
