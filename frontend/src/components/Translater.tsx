@@ -3,6 +3,7 @@ import { Show, createSignal, createEffect } from "solid-js";
 import { useUser } from "@contexts/UserProvider";
 import { useRoomLogic } from "@contexts/RoomProvider";
 import { useStreaming } from "@hooks/stream/useStreaming";
+import { useMovement } from "@hooks/useMovement";
 import { useParams } from "@solidjs/router";
 import ChatRoom from "@components/ChatRoom/index";
 
@@ -12,7 +13,14 @@ const Translater: Component = () => {
   const login = context?.login;
   const { isOwner, roomUid } = useRoomLogic();
 
-  const { handleStreaming, isStreaming } = useStreaming(roomUid);
+  const {
+    handleStreaming,
+    isStreaming,
+    sendOtherMessage,
+    sendMessage,
+    sendMessage1,
+  } = useStreaming(roomUid);
+  useMovement();
 
   return (
     <>

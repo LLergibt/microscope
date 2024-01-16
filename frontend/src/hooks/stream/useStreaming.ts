@@ -6,7 +6,6 @@ import { start, stop } from "./NegotiateUtils";
 import axios from "axios";
 export const useStreaming = (roomUid: string) => {
   const context = useUser();
-  const token = context?.token;
   const user = context?.user;
   const [isStreaming, setIsStreaming] = createSignal();
   const isStreamingApi = async () => {
@@ -36,5 +35,8 @@ export const useStreaming = (roomUid: string) => {
   createEffect(() => {
     isStreaming() ? start() : stop();
   });
-  return { handleStreaming, isStreaming };
+  return {
+    handleStreaming,
+    isStreaming,
+  };
 };
