@@ -1,7 +1,8 @@
+import sys
+sys.path.append('./motion_utils')
+sys.path.append('./microscopes')
 from microscopes.routes_microscope import router as microscope_router
 from fastapi.middleware.cors import CORSMiddleware
-import sys
-sys.path.append('./microscopes')
 
 from fastapi import FastAPI
 
