@@ -14,6 +14,9 @@ export const useMovement = () => {
     console.log("Message from server ", event.data);
   });
   const [moveList, setMoveList] = createSignal<Array<string>>([]);
+  createEffect(() => {
+    console.log(moveList());
+  });
 
   const event = useKeyDownList();
 
@@ -22,15 +25,18 @@ export const useMovement = () => {
 
     if (e) {
       e.map((key) => {
-        let direction =
-          (key === "ARROWUP" && "up") ||
-          (key === "ARROWDOWN" && "down") ||
-          (key === "ARROWLEFT" && "left") ||
-          (key === "ARROWRIGHT" && "right");
-        if (direction) {
-          if (!moveList().includes(direction)) {
-            setMoveList((prev) => [...prev, direction]);
-            sendMoveConfig({ move_status: "start", direction: direction });
+        let acceptableKeys = [
+          "ARROWUP",
+          "ARROWDOWN",
+          "ARROWLEFT",
+          "ARROWRIGHT",
+          "W",
+          "S",
+        ];
+        if (acceptableKeys.includes(key)) {
+          if (!moveList().includes(key)) {
+            setMoveList((prev) => [...prev, key]);
+            sendMoveConfig({ move_status: "start", direction: key });
           }
         }
       });
@@ -38,7 +44,7 @@ export const useMovement = () => {
     if (e.length < moveList().length) {
       const dataList = moveList();
       moveList().map((move, idx) => {
-        if (!e.includes(`ARROW${move.toUpperCase()}`)) {
+        if (!e.includes(move)) {
           dataList.splice(idx, 1);
           sendMoveConfig({ move_status: "stop", direction: move });
         }
