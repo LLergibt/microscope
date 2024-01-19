@@ -1,6 +1,7 @@
 from fastapi import APIRouter, WebSocket
 from .models_microscope import Offer
 from .movement_microscope import junk_is_about_to_start_moving
+from motion_utils.motor_movement import main
 from aiortc import RTCPeerConnection, RTCSessionDescription
 import json
 
@@ -55,6 +56,30 @@ async def offer(params: Offer):
     return {"sdp": pc.localDescription.sdp, "type": pc.localDescription.type}
 
 
+def set_move_config_by_key(key: str):
+    axis = ''
+    direction = ''
+    match key:
+        case 'ARROWUP':
+            direction = "cw"
+            axis = "y"
+        case 'ARROWDOWN':
+            direction = "acw"
+            axis = "y"
+        case 'ARROWRIGHT':
+            direction = "cw"
+            axis = "x"
+        case 'ARROWLEFT':
+            direction = "acw"
+            axis = "x"
+        case 'W':
+            direction = "cw"
+            axis = "z"
+        case 'S':
+            direction = "acw"
+            axis = "z"
+    return direction, axis
+
 
 @router.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
@@ -65,9 +90,10 @@ async def websocket_endpoint(websocket: WebSocket):
         data = await websocket.receive_text()
         if data != 'Connection established':
             parse_data = json.loads(data)
+            direction, axis = set_move_config_by_key(parse_data['direction'])
             match parse_data['move_status']:
                 case 'start':
-                    future = asyncio.ensure_future(junk_is_about_to_start_moving(parse_data['direction']))
+                    future = asyncio.ensure_future(main(direction, axis))
                     tasks.append({"task": future, "direction": parse_data['direction']})
                 case 'stop':
                     for task in tasks:
