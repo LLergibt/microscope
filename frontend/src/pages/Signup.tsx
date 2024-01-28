@@ -1,10 +1,10 @@
-import ModalTemplate from "@components/Utils/ModalTemplate";
-import { useUser } from "@contexts/UserProvider";
+import ModalTemplate from "@/components/Utils/ModalTemplate";
+import { useUser } from "@/contexts/UserProvider";
 import { createSignal, Show, createEffect, createResource } from "solid-js";
 import type { Accessor } from "solid-js";
 import { Navigate } from "@solidjs/router";
 import type { AxiosResponse } from "axios";
-import InputForm from "@components/Utils/InputForm";
+import InputForm from "@/components/Utils/InputForm";
 
 type SignupForm = {
   email: string;

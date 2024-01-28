@@ -1,4 +1,4 @@
-import { useFirestore } from "@services/firebase";
+import { useFirestore } from "@/services/firebase";
 import { createSignal, createEffect } from "solid-js";
 
 function useMessages(roomId: number) {

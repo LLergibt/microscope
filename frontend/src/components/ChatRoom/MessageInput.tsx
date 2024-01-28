@@ -1,6 +1,6 @@
-import { useUser } from "@contexts/UserProvider";
+import { useUser } from "@/contexts/UserProvider";
 import { createSignal } from "solid-js";
-import { useFirestore } from "@services/firebase";
+import { useFirestore } from "@/services/firebase";
 
 const MessageInput = ({ roomId }) => {
   const { user } = useUser();

@@ -6,7 +6,7 @@ import {
 } from "solid-js";
 import type { JSX, Component, Accessor } from "solid-js";
 import { useParams } from "@solidjs/router";
-import { useUser } from "@contexts/UserProvider";
+import { useUser } from "@/contexts/UserProvider";
 
 const RoomContext = createContext<{
   isOwner: Accessor<boolean>;

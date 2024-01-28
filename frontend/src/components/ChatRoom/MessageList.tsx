@@ -1,5 +1,5 @@
-import { useUser } from "@contexts/UserProvider";
-import { useMessages } from "@hooks/useMessages";
+import { useUser } from "@/contexts/UserProvider";
+import { useMessages } from "@/hooks/useMessages";
 import Message from "./Message";
 import { createEffect } from "solid-js";
 

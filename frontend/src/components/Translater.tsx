@@ -1,11 +1,11 @@
 import type { JSX, Component } from "solid-js";
 import { Show, createSignal, createEffect } from "solid-js";
-import { useUser } from "@contexts/UserProvider";
-import { useRoomLogic } from "@contexts/RoomProvider";
-import { useStreaming } from "@hooks/stream/useStreaming";
-import { useMovement } from "@hooks/useMovement";
+import { useUser } from "@/contexts/UserProvider";
+import { useRoomLogic } from "@/contexts/RoomProvider";
+import { useStreaming } from "@/hooks/stream/useStreaming";
+import { useMovement } from "@/hooks/useMovement";
 import { useParams } from "@solidjs/router";
-import ChatRoom from "@components/ChatRoom/index";
+import ChatRoom from "@/components/ChatRoom/index";
 
 const Translater: Component = () => {
   let video;

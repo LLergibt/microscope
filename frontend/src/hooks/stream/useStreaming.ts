@@ -1,6 +1,6 @@
 import { createEffect, createSignal, onMount } from "solid-js";
-import { useUser } from "@contexts/UserProvider";
-import { db } from "@services/firebase";
+import { useUser } from "@/contexts/UserProvider";
+import { db } from "@/services/firebase";
 import { collection, getDoc, doc, updateDoc } from "firebase/firestore";
 import { start, stop } from "./NegotiateUtils";
 import axios from "axios";

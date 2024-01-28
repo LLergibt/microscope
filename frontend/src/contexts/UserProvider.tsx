@@ -13,7 +13,7 @@ import {
   signInWithEmailAndPassword,
 } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
-import { auth, db } from "@services/firebase";
+import { auth, db } from "@/services/firebase";
 import axios from "axios";
 
 const UserContext = createContext<userContextType>();
