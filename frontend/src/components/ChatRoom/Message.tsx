@@ -3,20 +3,14 @@ const Message = ({ message, isOwnMessage }) => {
   console.log(message, isOwnMessage);
   return (
     <li
-      class={`${
+      class={` min-w-[7rem] max-w-[20rem] ${
         isOwnMessage
-          ? "bg-blue-500 self-end border rounded   w-auto  px-1 flex flex-col mb-2"
-          : "border rounded pt-1 px-1 mb-2 self-start"
+          ? "bg-black self-end border rounded text-white text-end self-end  pl-2 px-1 flex flex-col mb-2"
+          : "border rounded pt-1 px-1 pr-2 mb-2 self-start text-start self-start"
       }`}
     >
-      <h4
-        class={`${
-          isOwnMessage ? "text-end self-end" : "text-start self-start"
-        } `}
-      >
-        {isOwnMessage ? "You" : displayName}
-      </h4>
-      <div class="pl-2">{text}</div>
+      <h4 class="font-medium">{isOwnMessage ? "You" : displayName}</h4>
+      <div class="break-words">{text}</div>
     </li>
   );
 };

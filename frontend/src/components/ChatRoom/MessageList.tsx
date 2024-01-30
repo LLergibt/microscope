@@ -16,7 +16,7 @@ const MessageList = ({ roomId }) => {
 
   return (
     <div ref={containerRef}>
-      <ul class="h-full flex flex-col justify-center">
+      <ul class="h-full  flex flex-col justify-center">
         {messages().map((x) => (
           <Message key={x.id} message={x} isOwnMessage={x.uid === user().uid} />
         ))}

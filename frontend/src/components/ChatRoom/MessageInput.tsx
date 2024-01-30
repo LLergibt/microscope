@@ -1,6 +1,8 @@
 import { useUser } from "@/contexts/UserProvider";
 import { createSignal } from "solid-js";
 import { useFirestore } from "@/services/firebase";
+import { TextField, TextFieldInput } from "@/components/ui/textfield";
+import { Button } from "@/components/ui/button";
 
 const MessageInput = ({ roomId }) => {
   const { user } = useUser();
@@ -18,23 +20,14 @@ const MessageInput = ({ roomId }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} class="my-2 flex">
-      <input
-        type="text"
-        placeholder="Enter a message"
-        value={value()}
-        onChange={handleChange}
-        required
-        class="bg-gray-300 rounded"
-        minLength={1}
-      />
-      <button
-        class="rounded text-center  text-white hover:text-gray-300  bg-black ml-2 p-2 text-sm border border-gray-300"
-        type="submit"
-        disabled={value < 1}
-      >
-        Send
-      </button>
+    <form onSubmit={handleSubmit} class="mt-2 pr-5">
+      <TextField>
+        <TextFieldInput
+          onChange={handleChange}
+          value={value()}
+          placeholder="Отправить сообщение"
+        />
+      </TextField>
     </form>
   );
 };

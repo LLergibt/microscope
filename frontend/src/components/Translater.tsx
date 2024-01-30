@@ -25,8 +25,8 @@ const Translater: Component = () => {
   return (
     <>
       <Show when={login()}>
-        <div class="flex w-screen">
-          <div class="w-4/5  h-full mt-8 flex  flex-col text-xl">
+        <div class="flex w-screen h-full">
+          <div class="w-4/5  flex  flex-col text-xl">
             <div>
               <Show when={isOwner()}>
                 <button
@@ -39,7 +39,7 @@ const Translater: Component = () => {
             </div>
 
             <video
-              class={"w-4/5 mt-0 self-center h-auto   "}
+              class={isStreaming() ? "w-4/6 mt-0 self-center h-auto" : "hidden"}
               id="video"
               ref={video}
               autoPlay
