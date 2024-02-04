@@ -1,5 +1,4 @@
-import { useUser } from "../../contexts/UserProvider";
-import Dropdown from "../Utils/Dropdown";
+import { useUser } from "@/contexts/UserProvider";
 import type { Component } from "solid-js";
 import {
   DropdownMenu,
@@ -14,9 +13,7 @@ import { As } from "@kobalte/core";
 import { Button } from "@/components/ui/button";
 
 const AuthenticatedNavbar: Component = () => {
-  const context = useUser();
-  const login = context?.login;
-  const logout = context?.logout;
+  const { login, logout } = useUser();
   return (
     <>
       <DropdownMenu placement="bottom">

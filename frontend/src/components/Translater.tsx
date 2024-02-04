@@ -1,48 +1,42 @@
-import type { JSX, Component } from "solid-js";
-import { Show, createSignal, createEffect } from "solid-js";
+import type { Component } from "solid-js";
+import { Show, createSignal } from "solid-js";
 import { useUser } from "@/contexts/UserProvider";
 import { useRoomLogic } from "@/contexts/RoomProvider";
 import { useStreaming } from "@/hooks/stream/useStreaming";
 import { useMovement } from "@/hooks/useMovement";
-import { useParams } from "@solidjs/router";
+import { Button } from "@/components/ui/button";
 import ChatRoom from "@/components/ChatRoom/index";
 
 const Translater: Component = () => {
-  let video;
-  const context = useUser();
-  const login = context?.login;
+  const [, setVideo] = createSignal<HTMLVideoElement>();
+  const { login } = useUser();
   const { isOwner, roomUid } = useRoomLogic();
 
-  const {
-    handleStreaming,
-    isStreaming,
-    sendOtherMessage,
-    sendMessage,
-    sendMessage1,
-  } = useStreaming(roomUid);
+  const { handleStreaming, isStreaming } = useStreaming(roomUid, setVideo);
   useMovement();
 
   return (
     <>
       <Show when={login()}>
         <div class="flex w-screen h-full">
-          <div class="w-4/5  flex  flex-col text-xl">
-            <div>
-              <Show when={isOwner()}>
-                <button
-                  class="rounded  text-center w-32  ml-8 h-8 text-white hover:text-gray-300  bg-black    border border-gray-300"
-                  onClick={handleStreaming}
-                >
-                  {isStreaming() ? "stop" : "start"}
-                </button>
-              </Show>
-            </div>
+          <div class="w-4/5 flex">
+            <Show when={isOwner()}>
+              <Button
+                size="lg"
+                class=" mt-3 text-base"
+                onClick={handleStreaming}
+              >
+                {isStreaming() ? "stop" : "start"}
+              </Button>
+            </Show>
 
             <video
-              class={isStreaming() ? "w-4/6 mt-0 self-center h-auto" : "hidden"}
+              class={
+                isStreaming() ? "w-4/6  ml-8 self-center h-full" : "hidden"
+              }
               id="video"
-              ref={video}
-              autoPlay
+              ref={setVideo}
+              autoplay
               muted
             />
           </div>

@@ -1,16 +1,6 @@
 import { initializeApp } from "firebase/app";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
-import {
-  getFirestore,
-  collection,
-  addDoc,
-  serverTimestamp,
-  onSnapshot,
-  query,
-  orderBy,
-  getDocs,
-} from "firebase/firestore";
-import { getAnalytics } from "firebase/analytics";
+import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
 const firebaseConfig = {
   apiKey: "AIzaSyBW5dRcsggB-GteyAhjY8TXotc4uRGlbPA",
   authDomain: "microscope-49942.firebaseapp.com",
@@ -23,38 +13,4 @@ const firebaseConfig = {
 
 export const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
-console.log(auth.currentUser);
 export const db = getFirestore(app);
-const analytics = getAnalytics(app);
-
-export const useFirestore = () => {
-  const sendMessage = async (roomId, user, text) => {
-    console.log(user());
-    try {
-      await addDoc(collection(db, "rooms", roomId, "messages"), {
-        uid: user().uid,
-        displayName: user().displayName,
-        text: text(),
-        timestamp: serverTimestamp(),
-      });
-    } catch (error) {
-      console.error(error);
-    }
-  };
-  const getMessages = async (roomId, callback) => {
-    return onSnapshot(
-      query(
-        collection(db, "rooms", roomId, "messages"),
-        orderBy("timestamp", "asc")
-      ),
-      (querySnapshot) => {
-        const messages = querySnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        callback(messages);
-      }
-    );
-  };
-  return { sendMessage, getMessages };
-};

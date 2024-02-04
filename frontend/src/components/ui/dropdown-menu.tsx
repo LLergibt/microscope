@@ -49,9 +49,6 @@ export const DropdownMenuItem: ParentComponent<
         local.inset && "pl-8",
         local.class
       )}
-      onValueChange={() => {
-        console.log("gg");
-      }}
       {...rest}
     />
   );

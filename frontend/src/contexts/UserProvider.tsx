@@ -1,25 +1,37 @@
-import {
-  createContext,
-  createEffect,
-  createSignal,
-  useContext,
-} from "solid-js";
-import type { JSX, Component, Accessor } from "solid-js";
-import type { userContextType, userType } from "@types/user";
+import { createContext, createSignal, useContext } from "solid-js";
+import type { JSX, Component } from "solid-js";
 import { onIdTokenChanged } from "firebase/auth";
 import {
   createUserWithEmailAndPassword,
   updateProfile,
   signInWithEmailAndPassword,
+  User,
 } from "firebase/auth";
-import { doc, getDoc } from "firebase/firestore";
-import { auth, db } from "@/services/firebase";
-import axios from "axios";
+import { auth } from "@/services/firebase";
+import { Accessor } from "solid-js";
+import { User as FirebaseUser } from "firebase/auth";
 
-const UserContext = createContext<userContextType>();
+type LoginForm = {
+  email: string;
+  password: string;
+};
+type UserForm = {
+  login: string;
+  password: string;
+  email: string;
+};
+type UserContextType = {
+  loginUser: (user: LoginForm) => Promise<string>;
+  createUser: (user: UserForm) => Promise<string>;
+  user: Accessor<FirebaseUser | undefined>;
+  login: Accessor<string | null>;
+  logout: () => void;
+};
+
+const UserContext = createContext<UserContextType | null>(null);
 const UserProvider: Component<{ children: JSX.Element }> = (props) => {
-  const [login, setLogin] = createSignal("");
-  const [user, setUser] = createSignal();
+  const [login, setLogin] = createSignal<string | null>("");
+  const [user, setUser] = createSignal<User | undefined>();
   onIdTokenChanged(auth, (authUser) => {
     if (authUser) {
       setUser(authUser);
@@ -43,13 +55,13 @@ const UserProvider: Component<{ children: JSX.Element }> = (props) => {
     try {
       const user = await signInWithEmailAndPassword(auth, email, password);
       return user;
-    } catch (err) {
-      console.error(err);
-      alert(err.message);
+    } catch (err: any) {
+      console.error(typeof err);
+      alert(err?.message);
       return err;
     }
   };
-  const createUser = async (userForm: userType) => {
+  const createUser = async (userForm: UserForm) => {
     try {
       await createUserWithEmailAndPassword(
         auth,
@@ -64,16 +76,11 @@ const UserProvider: Component<{ children: JSX.Element }> = (props) => {
 
         return true;
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
       alert(err.message);
       return err;
     }
-  };
-  const getIsOwner = async (roomUid: string) => {
-    const microscopeDoc = doc(db, "rooms", roomUid);
-    const microscope = await getDoc(microscopeDoc);
-    return microscope.data().owners.includes(user().uid);
   };
 
   return (
@@ -82,7 +89,6 @@ const UserProvider: Component<{ children: JSX.Element }> = (props) => {
         loginUser,
         user,
         login,
-        getIsOwner,
         logout,
         createUser,
       }}
@@ -91,5 +97,5 @@ const UserProvider: Component<{ children: JSX.Element }> = (props) => {
     </UserContext.Provider>
   );
 };
-export const useUser = () => useContext(UserContext);
+export const useUser = () => useContext(UserContext) as UserContextType;
 export default UserProvider;

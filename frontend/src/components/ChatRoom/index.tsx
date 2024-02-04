@@ -1,21 +1,15 @@
 import MessageInput from "./MessageInput";
 import MessageList from "./MessageList";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
+import { useMessages } from "@/hooks/useMessages";
 
-function ChatRoom(props) {
-  // ...
+function ChatRoom(props: { roomUid: string }) {
+  const { messages, sendMessage } = useMessages(props.roomUid);
   return (
     <>
       <Card class="overflow-y-auto flex flex-col justify-between mt-1 px-3 py-2 min-w-[23rem] h-[50rem]">
-        <MessageList roomId={props.roomUid} />
-        <MessageInput roomId={props.roomUid} />
+        <MessageList messages={messages} />
+        <MessageInput sendMessage={sendMessage} />
       </Card>
     </>
   );

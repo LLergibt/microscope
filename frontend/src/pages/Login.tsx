@@ -1,14 +1,9 @@
-import ModalTemplate from "@/components/Utils/ModalTemplate";
 import { useUser } from "@/contexts/UserProvider";
-import { createSignal, Show, createEffect, createResource } from "solid-js";
-import type { Accessor } from "solid-js";
+import { createSignal, Show, createResource } from "solid-js";
 import { Navigate } from "@solidjs/router";
-import type { AxiosResponse } from "axios";
-import InputForm from "@/components/Utils/InputForm";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -30,7 +25,7 @@ const Login = () => {
   const [password, setPassword] = createSignal("");
   const [user, setUser] = createSignal<LoginForm>();
   const [email, setEmail] = createSignal("");
-  const [response] = createResource<Accessor<AxiosResponse>>(user, loginUser);
+  const [response] = createResource(user, loginUser);
   return (
     <>
       <Card>

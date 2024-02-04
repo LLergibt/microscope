@@ -7,21 +7,31 @@ import {
 import type { JSX, Component, Accessor } from "solid-js";
 import { useParams } from "@solidjs/router";
 import { useUser } from "@/contexts/UserProvider";
-
-const RoomContext = createContext<{
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "@/services/firebase";
+type RoomContextType = {
   isOwner: Accessor<boolean>;
   roomUid: string;
-}>();
+};
+const RoomContext = createContext<RoomContextType>();
 const RoomProvider: Component<{ children: JSX.Element }> = (props) => {
-  const context = useUser();
-  const user = context?.user;
-  const getIsOwner = context?.getIsOwner;
+  const { user } = useUser();
   const [isOwner, setIsOwner] = createSignal(false);
   const { roomUid } = useParams();
-  const handleOwner = async () => setIsOwner(await getIsOwner(roomUid));
+
+  const getIsOwner = async (roomUid: string) => {
+    const microscopeDoc = doc(db, "rooms", roomUid);
+    const microscope = await getDoc(microscopeDoc);
+    const isOwner: boolean = microscope.data()?.owners.includes(user()?.uid);
+    return isOwner;
+  };
+
+  const handleOwner = async () => {
+    setIsOwner(await getIsOwner(roomUid));
+  };
 
   createEffect(() => {
-    if (user && user()) {
+    if (user()) {
       handleOwner();
     }
   });
@@ -32,5 +42,5 @@ const RoomProvider: Component<{ children: JSX.Element }> = (props) => {
     </RoomContext.Provider>
   );
 };
-export const useRoomLogic = () => useContext(RoomContext);
+export const useRoomLogic = () => useContext(RoomContext) as RoomContextType;
 export default RoomProvider;

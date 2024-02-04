@@ -1,29 +1,35 @@
 import { useUser } from "@/contexts/UserProvider";
-import { createSignal } from "solid-js";
-import { useFirestore } from "@/services/firebase";
+import { createSignal, Accessor, JSX } from "solid-js";
+import { User } from "firebase/auth";
 import { TextField, TextFieldInput } from "@/components/ui/textfield";
-import { Button } from "@/components/ui/button";
 
-const MessageInput = ({ roomId }) => {
+const MessageInput = (props: {
+  sendMessage: (user: Accessor<User>, text: Accessor<string>) => Promise<void>;
+}) => {
   const { user } = useUser();
   const [value, setValue] = createSignal("");
-  const { sendMessage } = useFirestore();
 
-  const handleChange = (event) => {
-    setValue(event.target.value);
+  const handleChange: JSX.EventHandlerUnion<HTMLInputElement, InputEvent> = (
+    event
+  ) => {
+    setValue(event.currentTarget.value);
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit: JSX.EventHandlerUnion<HTMLFormElement, Event> = (
+    event
+  ) => {
     event.preventDefault();
-    sendMessage(roomId, user, value);
-    setValue("");
+    if (user()) {
+      props.sendMessage(user as Accessor<User>, value);
+      setValue("");
+    }
   };
 
   return (
     <form onSubmit={handleSubmit} class="mt-2 pr-5">
       <TextField>
         <TextFieldInput
-          onChange={handleChange}
+          onInput={handleChange}
           value={value()}
           placeholder="Отправить сообщение"
         />
