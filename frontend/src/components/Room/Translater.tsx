@@ -1,15 +1,9 @@
 import type { Component } from "solid-js";
-import { Show, createSignal, createEffect } from "solid-js";
 import { useRoomLogic } from "@/contexts/RoomProvider";
-import { useStreaming } from "@/hooks/stream/useStreaming";
 import { useMovement } from "@/hooks/useMovement";
-import { Button } from "@/components/ui/button";
 
 const Translater: Component = () => {
-  const { roomUid, video, setVideo } = useRoomLogic();
-  createEffect(() => {
-    console.log(video());
-  });
+  const { setVideo } = useRoomLogic();
 
   useMovement();
 

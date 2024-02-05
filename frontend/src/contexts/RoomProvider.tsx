@@ -13,11 +13,10 @@ type RoomContextType = {
   isOwner: Accessor<boolean>;
   roomUid: string;
   setVideo: Setter<HTMLVideoElement | undefined>;
-  video: Accessor<HTMLVideoElement | undefined>;
 };
 const RoomContext = createContext<RoomContextType>();
 const RoomProvider: Component<{ children: JSX.Element }> = (props) => {
-  const [video, setVideo] = createSignal<HTMLVideoElement>();
+  const [, setVideo] = createSignal<HTMLVideoElement>();
   const { user } = useUser();
   const [isOwner, setIsOwner] = createSignal(false);
   const { roomUid } = useParams();
@@ -40,7 +39,7 @@ const RoomProvider: Component<{ children: JSX.Element }> = (props) => {
   });
 
   return (
-    <RoomContext.Provider value={{ isOwner, roomUid, video, setVideo }}>
+    <RoomContext.Provider value={{ isOwner, roomUid, setVideo }}>
       {props.children}
     </RoomContext.Provider>
   );
