@@ -1,8 +1,8 @@
-import { createEffect, createSignal, onMount, Setter } from "solid-js";
+import { createSignal, onMount, Setter } from "solid-js";
 import { useUser } from "@/contexts/UserProvider";
 import { db } from "@/services/firebase";
 import { getDoc, doc } from "firebase/firestore";
-import { useNegotiate } from "./NegotiateUtils";
+import { connect, disconnect } from "./NegotiateUtils";
 import axios from "axios";
 export const useStreaming = (
   roomUid: string,
@@ -11,7 +11,6 @@ export const useStreaming = (
   const context = useUser();
   const user = context?.user;
   const [isStreaming, setIsStreaming] = createSignal();
-  const { start, stop } = useNegotiate(setVideo);
   const isStreamingApi = async () => {
     const microscopeDoc = doc(db, "rooms", roomUid);
     const microscope = await getDoc(microscopeDoc);
@@ -32,6 +31,8 @@ export const useStreaming = (
     }
   };
   const handleStreaming = async () => {
+    isStreaming() ? disconnect(setVideo) : connect(setVideo);
+
     setIsStreaming((prev) => !prev);
     await isStreamingApiChange();
   };
@@ -39,9 +40,9 @@ export const useStreaming = (
   onMount(async () => {
     const isStreamingRaw = await isStreamingApi();
     setIsStreaming(isStreamingRaw);
-  });
-  createEffect(() => {
-    isStreaming() ? start() : stop();
+    if (isStreamingRaw) {
+      connect(setVideo);
+    }
   });
   return {
     handleStreaming,

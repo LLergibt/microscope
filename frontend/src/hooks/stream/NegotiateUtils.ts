@@ -32,11 +32,10 @@ async function negotiate(pc: RTCPeerConnection) {
 
   pc.setRemoteDescription(result);
 }
-async function connect(
-  pc: RTCPeerConnection | null,
-  setVideo: Setter<HTMLVideoElement | undefined>
-) {
+let pc: RTCPeerConnection | null = null;
+export async function connect(setVideo: Setter<HTMLVideoElement | undefined>) {
   pc = new RTCPeerConnection();
+
   function onTrack(evt: RTCTrackEvent) {
     if (evt.track.kind == "video") {
       setVideo((video) => {
@@ -52,17 +51,14 @@ async function connect(
   await negotiate(pc);
 }
 
-function disconnect(pc: RTCPeerConnection | null) {
-  // close peer connection
-  pc?.close();
+export function disconnect(setVideo: Setter<HTMLVideoElement | undefined>) {
+  if (pc) {
+    pc.close();
+    setVideo((video) => {
+      if (video) {
+        video.srcObject = null;
+        return video;
+      }
+    });
+  }
 }
-
-export const useNegotiate = (
-  setVideo: Setter<HTMLVideoElement | undefined>
-) => {
-  let pc: RTCPeerConnection | null = null;
-  const start = async () => await connect(pc, setVideo);
-  const stop = () => disconnect(pc);
-
-  return { start, stop };
-};

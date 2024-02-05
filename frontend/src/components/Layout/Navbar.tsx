@@ -1,4 +1,4 @@
-import { A, Outlet } from "@solidjs/router";
+import { A } from "@solidjs/router";
 import { useUser } from "@/contexts/UserProvider";
 import { Show } from "solid-js";
 import AuthenticatedNavbar from "./AuthenticatedNavbar";
@@ -13,13 +13,13 @@ const Navbar = () => {
           fallback={
             <>
               <A
-                class="text-gray-600 transition-colors mr-2 hover:text-black"
+                class="text-gray-600 underline transition-colors mr-2 hover:text-black"
                 href="/login"
               >
                 Login
               </A>
               <A
-                class="text-gray-600 transition-colors hover:text-black"
+                class="text-gray-600 underline transition-colors hover:text-black"
                 href="/signup"
               >
                 Signup
@@ -30,7 +30,6 @@ const Navbar = () => {
           <AuthenticatedNavbar />
         </Show>
       </div>
-      <Outlet />
     </>
   );
 };
