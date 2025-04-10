@@ -24,7 +24,7 @@ export const useStreaming = (
       await axios.post(
         `${
           import.meta.env.VITE_FIRESTORE_API_BASE_URL
-        }/rooms/stream/?room_uid=${roomUid}`,
+        }/rooms/stream?room_uid=${roomUid}`,
         {},
         { headers: { Authorization: tokenId } }
       );

@@ -21,7 +21,7 @@ async function negotiate(pc: RTCPeerConnection) {
   async function queryToApi() {
     let offer = pc.localDescription;
     if (offer) {
-      const result = await axios.post("http://localhost:8000/webcam/offer", {
+      const result = await axios.post(`${import.meta.env.VITE_CAM_API_BASE_URL}/webcam/offer`, {
         sdp: offer.sdp,
         type: offer.type,
       });

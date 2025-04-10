@@ -39,7 +39,7 @@ const Login = () => {
           </TextField>
           <TextField class="space-y-1">
             <TextFieldLabel>Password</TextFieldLabel>
-            <TextFieldInput
+            <TextFieldInput type="password"
               onChange={(e) => setPassword(e.currentTarget.value)}
             />
           </TextField>

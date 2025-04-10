@@ -2,7 +2,7 @@ import { useKeyDownList } from "@solid-primitives/keyboard";
 import { createEffect, createSignal } from "solid-js";
 
 export const useMovement = () => {
-  const socket = new WebSocket("ws://127.0.0.1:8000/webcam/ws");
+  const socket = new WebSocket(`${import.meta.env.VITE_CAM_WS_BASE_URL}/webcam/ws`);
   socket.addEventListener("open", () => {
     socket.send("Connection established");
   });

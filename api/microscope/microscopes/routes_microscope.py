@@ -93,7 +93,7 @@ async def websocket_endpoint(websocket: WebSocket):
             direction, axis = set_move_config_by_key(parse_data['direction'])
             match parse_data['move_status']:
                 case 'start':
-                    future = asyncio.ensure_future(main(direction, axis))
+                    future = asyncio.ensure_future(main(axis, direction))
                     tasks.append({"task": future, "direction": parse_data['direction']})
                 case 'stop':
                     for task in tasks:
